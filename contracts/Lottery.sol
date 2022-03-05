@@ -19,9 +19,19 @@ contract Lottery {
     return uint256(keccak256(block.difficulty, now, players));
   }
 
-  function pickWinner() public {
+  function pickWinner() public restricted {
+    //using restricted modifier -> same as remove all function code and add to _; modifier
     uint256 index = random() % players.length;
     players[index].transfer(this.balance); //instance of a contract
     players = new address[](0);
+  }
+
+  modifier restricted() {
+    require(msg.sender == manager);
+    _;
+  }
+
+  function getPlayers() public view returns (address[]) {
+    return players;
   }
 }
